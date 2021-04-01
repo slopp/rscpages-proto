@@ -59,12 +59,17 @@ rsc_navbar <- function(logo){
 #' @return Creates a card div with content details
 rsc_tile <- function(c) {
   title <- ifelse(is.na(c$title), c$name, c$title)
+  author <- paste(c$owner_first_name, c$owner_last_name)
+  updated <- paste0("Published ", as.Date(content$last_deployed_time[1]))
   div(class="card",
       img(src=paste0("./",c$image), class="card-img-top", width = 30),
       div(class="card-body",
           h5(a(href=c$url, class="bg stretched-link", title)),
+          h6(class="card-subtitle mb-2 text-muted", author),
           p(class="card-text", c$description),
-          
+      ),
+      div(class="card-footer",
+        p(class="text-muted", updated)
       )
   )
 }
@@ -74,7 +79,7 @@ rsc_tile <- function(c) {
 #' @param content Content data frame from connectapi::get_content
 #' @param cards_per_row Number of cards in each row, default 4
 #' @return Tag list containing rows of card decks
-rsc_tiles <- function(content, cards_per_row = 4) {
+rsc_tiles <- function(content, cards_per_row = 3) {
   card_holder <- tagList()
   rows <- ceiling(nrow(content) / cards_per_row)
   for(r in 1:rows) {
