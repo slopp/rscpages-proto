@@ -1,0 +1,46 @@
+---
+output: 
+  html_document:
+    theme:
+      base_font: bslib::font_google("Open Sans")
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
+
+source('R/rscpages2.R')
+```
+
+```{r get-content, echo=FALSE, message=FALSE, warning=FALSE}
+library(connectapi)
+library(dplyr)
+library(bslib)
+
+# setup connect client
+rsc <- connect()
+
+# get tags from RSC
+tags <- get_tag_data(rsc)
+
+# pull tag id by name
+project_tag <- "Dashboards"
+project_tag_id <- tags %>% 
+  filter(name == project_tag) %>% 
+  pull(id)
+
+# get content based on the tag of interest
+content <- get_content(rsc, filter = list(tag=project_tag_id))
+
+# get images for content
+content <- content %>% 
+  rowwise() %>% 
+  mutate(image = rsc_save_image(rsc, guid, "logo.png"))
+```
+
+```{r build-page}
+rsc_project_page()
+rsc_navbar('./logo.png')
+rsc_project_info(project_tag, "Info about my awesome project")
+rsc_tiles(content)
+```
+
