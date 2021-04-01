@@ -29,7 +29,14 @@ project_tag_id <- tags %>%
   pull(id)
 
 # get content based on the tag of interest
+# other pre-call filters work too, e.g.
+# list(name="content name")
+# but this relies on the internal API spec not the /v1/content API
 content <- get_content(rsc, filter = list(tag=project_tag_id))
+
+# post API filters could be applied here as well
+content <- content %>% 
+  filter(title != "test-app")
 
 # get images for content
 content <- content %>% 

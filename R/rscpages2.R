@@ -74,6 +74,11 @@ rsc_tile <- function(c) {
   )
 }
 
+
+empty_card <- function(variables) {
+  div(class="card")
+}
+
 #' Create content tiles
 #'
 #' @param content Content data frame from connectapi::get_content
@@ -85,11 +90,13 @@ rsc_tiles <- function(content, cards_per_row = 3) {
   for(r in 1:rows) {
     row <- div(class="p-3 card-deck")
     for(c in 1:cards_per_row){
-      content_row <- cards_per_row*(r-1) + c
-      if (content_row > nrow(content)) {
-        break
+      content_id <- cards_per_row*(r-1) + c
+      if (content_id > nrow(content)) {
+        row <- tagAppendChild(row, empty_card())  
+        
+      } else {
+        row <- tagAppendChild(row, rsc_tile(content[content_id,]))   
       }
-      row <- tagAppendChild(row, rsc_tile(content[content_row,]))  
     }
     card_holder <- tagAppendChild(card_holder, row)
   }
